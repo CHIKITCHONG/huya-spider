@@ -8,8 +8,10 @@ import time
 
 from tool.comm_lib import move_down, into_live, time_spend
 from tool.enum_instance import Order
-from conf import config
 from tool.until import log
+from conf import config
+
+from cache.huya_cache import redis_cli_gen
 
 
 class Model():
@@ -27,12 +29,16 @@ def init():
     """
     初始化
     """
+    # 初始化 webdriver
     driver = webdriver.Chrome()
     driver.get("https://www.huya.com/")
     driver.maximize_window()
     driver.implicitly_wait(5)
     driver.refresh()
-    return driver
+
+    # 初始化 redis
+    r = redis_cli_gen()
+    return driver, r
 
 
 def browser_login(driver: webdriver):
@@ -49,7 +55,7 @@ def browser_login(driver: webdriver):
         driver.find_element_by_css_selector(Order.login_button.value).click()
 
     except Exception as e:
-        log(e)
+        log('error ', e)
         raise(ZeroDivisionError("登陆标签有变导致 selenium 定位出错，请修正"))
 
 
@@ -128,7 +134,7 @@ def handle_room_tag(driver: webdriver, comm: str):
 
 @time_spend
 def main():
-    driver = init()
+    driver, redis_ = init()
     # 登陆
     browser_login(driver)
     # 进入直播页面
