@@ -101,7 +101,7 @@ def handle_room_tag(driver: webdriver, comm: str):
     # 将所有标签统计出来
     driver.execute_script(Order.page_end.value)
     sum_room = driver.find_elements_by_class_name(Order.room_tag.value)
-    print(sum_room)
+
     i = 0
     while i < len(sum_room):
         try:
