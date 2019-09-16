@@ -25,7 +25,6 @@ class Order(Enum):
     # 房间名称
     room_title = "#js-live-list > li:nth-child({}) > a.title.new-clickstat"
     # 翻页
-    # page_down = "#laypage_0 > a.laypage_next"
     page_down = "a[class=\"laypage_next\"]"
     # 滑至底部
     page_end = "var q=document.documentElement.scrollTop=100000"
