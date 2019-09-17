@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 import time
 
-from tool.comm_lib import move_down, into_live, time_spend
+from tool.comm_lib import move_down, into_live, time_spend, _add_cookies
 from tool.enum_instance import Order
 from tool.until import log
 from conf import config
@@ -36,8 +36,12 @@ def init():
     driver.implicitly_wait(5)
     driver.refresh()
 
+    # 设置 cookies
+    _add_cookies(driver)
+
     # 初始化 redis
     r = redis_cli_gen()
+
     return driver, r
 
 
@@ -68,6 +72,7 @@ def send_comments(driver: webdriver, room_title: str, comments: str):
         element = WebDriverWait(driver, 3).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, Order.send_button.value))
         )
+        time.sleep(1)
 
         driver.implicitly_wait(5)
         if element:
@@ -135,10 +140,13 @@ def handle_room_tag(driver: webdriver, comm: str):
 @time_spend
 def main():
     driver, redis_ = init()
+
     # 登陆
-    browser_login(driver)
+    # browser_login(driver)
+
     # 进入直播页面
     into_live(driver)
+
     # 依次进入房间并发送弹幕
     handle_room_tag(driver, config.content)
 

@@ -51,6 +51,9 @@ def time_spend(func):
 
 
 def _add_cookies(driver: webdriver):
+    if len(config.cookies) == 0:
+        raise TypeError("cookies 为空")
+
     for part in config.cookies.split('; '):
         k, v = part.split('=', 1)
         if driver.get_cookie(k) is None:
@@ -61,6 +64,4 @@ def _add_cookies(driver: webdriver):
                 domain='.huya.com',
                 secure=False
             )
-            # print('cookie', d)
             driver.add_cookie(d)
-    driver.get('https://www.huya.com/l')
