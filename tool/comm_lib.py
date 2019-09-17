@@ -51,6 +51,9 @@ def time_spend(func):
 
 
 def _add_cookies(driver: webdriver):
+    """
+    设置 cookies
+    """
     if len(config.cookies) == 0:
         raise TypeError("cookies 为空")
 
@@ -65,3 +68,14 @@ def _add_cookies(driver: webdriver):
                 secure=False
             )
             driver.add_cookie(d)
+    driver.refresh()
+
+
+def driver_option():
+    service_args = list()
+    service_args.append("--headless")
+    service_args.append('--load-images=no')          # 关闭图片加载,关闭图片加载有蜜汁BUG
+    service_args.append('--disk-cache=yes')          # 开启缓存
+    service_args.append('--ignore-ssl-errors=true')  # 忽略https错误
+    driver = webdriver.Chrome(service_args=service_args)
+    return driver

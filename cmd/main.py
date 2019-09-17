@@ -6,11 +6,10 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 import time
 
-from tool.comm_lib import move_down, into_live, time_spend, _add_cookies
+from tool.comm_lib import move_down, into_live, time_spend, _add_cookies, driver_option
 from tool.enum_instance import Order
 from tool.until import log
 from conf import config
-
 from cache.huya_cache import redis_cli_gen
 
 
@@ -30,7 +29,8 @@ def init():
     初始化
     """
     # 初始化 webdriver
-    driver = webdriver.Chrome()
+    driver = driver_option()
+
     driver.get("https://www.huya.com/")
     driver.maximize_window()
     driver.implicitly_wait(5)

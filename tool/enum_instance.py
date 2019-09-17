@@ -24,6 +24,8 @@ class Order(Enum):
     room_tag = "game-live-item"
     # 房间名称
     room_title = "#js-live-list > li:nth-child({}) > a.title.new-clickstat"
+    # 房间链接
+    room_href = "#js-live-list > li:nth-child({}) > a.title.new-clickstat:link"
     # 翻页
     page_down = "a[class=\"laypage_next\"]"
     # 滑至底部

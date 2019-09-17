@@ -1,12 +1,15 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import time
 
+from pyquery import PyQuery as pq
 from conf import config
+from tool.comm_lib import driver_option, into_live, _add_cookies
+from tool.enum_instance import Order
 
 
 def handle_cookies():
@@ -53,34 +56,68 @@ def page_up():
             page_down(driver)
 
 
-def _add_cookies():
+def get_source(driver: webdriver):
+    sum_room = driver.find_elements_by_class_name(Order.room_tag.value)
+    try:
+        tag = driver.find_element_by_css_selector(Order.page_down.value)
+        if tag:
+            pg = driver.page_source
+            return pg, len(sum_room)
+    except NoSuchElementException:
+        page_down(driver)
+
+
+def source_from_page(page: str, sum: int):
     """
-    测试添加 cookies, success
+    从 url 中下载网页并解析出页面内所有的电影
     """
-    driver = webdriver.Chrome()
-    url = 'https://www.huya.com/'
-    driver.get(url)
-    driver.implicitly_wait(10)
+    e = pq(page)
+    href_list = []
+    i = 0
+    while i < sum:
+        items = e('#js-live-list > li:nth-child({}) > a.video-info.new-clickstat'.format(i+1)).attr('href')
+        href_list.append(items)
+        i += 1
+    return href_list
+
+
+def driver_init(href: str):
+    """
+    初始化
+    """
+    # 初始化 webdriver
+    driver = driver_option()
+
+    driver.get(href)
+    driver.maximize_window()
+    driver.implicitly_wait(5)
     driver.refresh()
 
-    for part in config.cookies.split('; '):
-        k, v = part.split('=', 1)
-        if driver.get_cookie(k) is None:
-            d = dict(
-                name=k,
-                value=v,
-                path='/',
-                domain='.huya.com',
-                secure=False
-            )
-            # print('cookie', d)
-            driver.add_cookie(d)
-    driver.get('https://www.huya.com/l')
-    time.sleep(50)
+    # 设置 cookies
+    _add_cookies(driver)
+
+    return driver
 
 
 def test_main():
-    _add_cookies()
+    # --------- 测试获取 html 源码----------
+    # driver = driver_option()
+    #
+    # driver.get("https://www.huya.com/")
+    # driver.maximize_window()
+    # driver.implicitly_wait(5)
+    # driver.refresh()
+    #
+    # _add_cookies(driver)
+    # into_live(driver)
+    # # 获取页面源码
+    # resp, num = get_source(driver)
+    # source_from_page(resp, num)
+    # --------- 测试获取 html 源码----------
+    driver = driver_init('https://www.huya.com/chuhe')
+    _add_cookies(driver)
+    time.sleep(10)
+    driver.close()
 
 
 if __name__ == '__main__':
