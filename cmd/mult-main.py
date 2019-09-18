@@ -44,13 +44,14 @@ def get_source():
         if tag:
             pg = driver.page_source
             return pg, len(sum_room)
+
     except NoSuchElementException:
         move_down(driver)
 
 
 def source_from_page(page: str, sum: int):
     """
-    从 url 中下载网页并解析出页面内所有的电影
+    解析出本页面所有房间链接
     """
     e = pq(page)
     href_list = []
