@@ -101,23 +101,24 @@ def driver_init(href: str):
 
 def test_main():
     # --------- 测试获取 html 源码----------
-    # driver = driver_option()
-    #
-    # driver.get("https://www.huya.com/")
-    # driver.maximize_window()
-    # driver.implicitly_wait(5)
-    # driver.refresh()
-    #
-    # _add_cookies(driver)
-    # into_live(driver)
-    # # 获取页面源码
-    # resp, num = get_source(driver)
-    # source_from_page(resp, num)
-    # --------- 测试获取 html 源码----------
-    driver = driver_init('https://www.huya.com/chuhe')
+    driver = driver_option()
+
+    driver.get("https://www.huya.com/l")
+    driver.maximize_window()
+    driver.implicitly_wait(5)
+    driver.refresh()
+
     _add_cookies(driver)
-    time.sleep(10)
-    driver.close()
+    into_live(driver)
+    # 获取页面源码
+    resp, num = get_source(driver)
+    result = source_from_page(resp, num)
+    print(result)
+    # --------- 测试获取 html 源码----------
+    # driver = driver_init('https://www.huya.com/chuhe')
+    # _add_cookies(driver)
+    # time.sleep(10)
+    # driver.close()
 
 
 if __name__ == '__main__':
