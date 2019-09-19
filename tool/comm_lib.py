@@ -73,7 +73,7 @@ def _add_cookies(driver: webdriver):
 
 def driver_option():
     service_args = list()
-    service_args.append("--headless")
+    # service_args.append("--headless")
     service_args.append('--load-images=no')          # 关闭图片加载,关闭图片加载有蜜汁BUG
     service_args.append('--disk-cache=yes')          # 开启缓存
     service_args.append('--ignore-ssl-errors=true')  # 忽略https错误

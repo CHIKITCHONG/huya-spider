@@ -1,8 +1,12 @@
+import threading
+from typing import List
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.options import Options
 
 import time
 
@@ -10,6 +14,9 @@ from pyquery import PyQuery as pq
 from conf import config
 from tool.comm_lib import driver_option, into_live, _add_cookies
 from tool.enum_instance import Order
+from tool.until import log
+
+local_school = threading.local()
 
 
 def handle_cookies():
@@ -30,30 +37,43 @@ def page_down(driver: webdriver):
     """
     下滑动作
     """
-    bg = driver.find_element_by_css_selector('body')
-    bg.send_keys(Keys.SPACE)
+    time.sleep(3)
+    # bg = driver.find_element_by_css_selector('body')
+    # bg.send_keys(Keys.SPACE)
+    # driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+    # ActionChains(driver).move_by_offset(200, 100).click().perform()  # 鼠标左键点击， 200为x坐标， 100为y坐标
+    ActionChains(driver).double_click()
+    driver.send_keys(Keys.CONTROL, Keys.ARROW_DOWN)
 
 
 def page_up():
     """
     测试翻页
     """
-    driver = webdriver.Chrome()
+    driver = driver_option()
+    driver.maximize_window()
+
     url = 'https://www.huya.com/l'
     driver.get(url)
     driver.implicitly_wait(10)
     driver.refresh()
 
+    href_list = []
+
     while True:
         try:
-            tag = driver.find_element_by_css_selector("#laypage_0 > a.laypage_next")
+            tag = driver.find_element_by_css_selector(Order.page_down.value)
             if tag:
-                time.sleep(10)
                 tag.click()
-                time.sleep(5)
-                break
+                time.sleep(3)
+                pg, sum = get_source(driver)
+                source_from_page(pg, sum, href_list)
         except ElementClickInterceptedException:
+            return href_list
+        except NoSuchElementException:
+            print("---here---")
             page_down(driver)
+            time.sleep(3)
 
 
 def get_source(driver: webdriver):
@@ -67,18 +87,17 @@ def get_source(driver: webdriver):
         page_down(driver)
 
 
-def source_from_page(page: str, sum: int):
+def source_from_page(page: str, sum: int, url_list: List[str]) -> List[str]:
     """
     从 url 中下载网页并解析出页面内所有的电影
     """
     e = pq(page)
-    href_list = []
     i = 0
     while i < sum:
         items = e('#js-live-list > li:nth-child({}) > a.video-info.new-clickstat'.format(i+1)).attr('href')
-        href_list.append(items)
+        url_list.append(items)
         i += 1
-    return href_list
+    return url_list
 
 
 def driver_init(href: str):
@@ -99,10 +118,63 @@ def driver_init(href: str):
     return driver
 
 
+def log_int_thread():
+    """
+    测试 多线程写入 log 日志的办法
+    """
+    def log_in_text():
+        time.sleep(1)
+        log("测试")
+
+    task = []
+    for i in range(100):
+        t = threading.Thread(target=log_in_text())
+        task.append(t)
+    for i in task:
+        i.start()
+    for i in task:
+        i.join()
+
+
+def thread_func_global():
+
+    # 创建全局ThreadLocal对象:
+
+    def process_student():
+        # 获取当前线程关联的student:
+        std = local_school.student
+        print('Hello, %s (in %s)' % (std, threading.current_thread().name))
+        print(dir(local_school))
+
+    def process_thread(name):
+        # 绑定ThreadLocal的student:
+        local_school.student = name
+        process_student()
+
+    t1 = threading.Thread(target=process_thread, args=('Alice',), name='Thread-A')
+    t2 = threading.Thread(target=process_thread, args=('Bob',), name='Thread-B')
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
+
+
+def auto_receive_href():
+    pass
+
+
+def chrome_option_cookies():
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    browser = webdriver.Chrome(chrome_options=chrome_options)
+    browser.maximize_window()
+    return browser
+
+
 def test_main():
     # --------- 测试获取 html 源码----------
     driver = driver_option()
-
     driver.get("https://www.huya.com/l")
     driver.maximize_window()
     driver.implicitly_wait(5)
@@ -112,13 +184,24 @@ def test_main():
     into_live(driver)
     # 获取页面源码
     resp, num = get_source(driver)
-    result = source_from_page(resp, num)
+    lst = []
+    result = source_from_page(resp, num, lst)
     print(result)
-    # --------- 测试获取 html 源码----------
-    # driver = driver_init('https://www.huya.com/chuhe')
+
+    # --------- 测试 多线程任务锁 ---------
+    # log_int_thread()
+    # -------- 测试 多线程全局变量 --------
+    # thread_func_global()
+
+    # -------- 测试不停翻页 ---------
+    # resp = page_up()
+    # print(resp)
+
+    # 测试启用 Chrome option 启动，phantomjs 需要做反爬虫
+    # driver = chrome_option_cookies()
+    # driver.get("https://www.huya.com/l")
     # _add_cookies(driver)
     # time.sleep(10)
-    # driver.close()
 
 
 if __name__ == '__main__':
