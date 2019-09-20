@@ -118,47 +118,6 @@ def driver_init(href: str):
     return driver
 
 
-def log_int_thread():
-    """
-    测试 多线程写入 log 日志的办法
-    """
-    def log_in_text():
-        time.sleep(1)
-        log("测试")
-
-    task = []
-    for i in range(100):
-        t = threading.Thread(target=log_in_text())
-        task.append(t)
-    for i in task:
-        i.start()
-    for i in task:
-        i.join()
-
-
-def thread_func_global():
-
-    # 创建全局ThreadLocal对象:
-
-    def process_student():
-        # 获取当前线程关联的student:
-        std = local_school.student
-        print('Hello, %s (in %s)' % (std, threading.current_thread().name))
-        print(dir(local_school))
-
-    def process_thread(name):
-        # 绑定ThreadLocal的student:
-        local_school.student = name
-        process_student()
-
-    t1 = threading.Thread(target=process_thread, args=('Alice',), name='Thread-A')
-    t2 = threading.Thread(target=process_thread, args=('Bob',), name='Thread-B')
-    t1.start()
-    t2.start()
-    t1.join()
-    t2.join()
-
-
 def auto_receive_href():
     pass
 
@@ -178,7 +137,6 @@ def test_main():
     driver.get("https://www.huya.com/l")
     driver.maximize_window()
     driver.implicitly_wait(5)
-    driver.refresh()
 
     _add_cookies(driver)
     into_live(driver)
@@ -187,6 +145,12 @@ def test_main():
     lst = []
     result = source_from_page(resp, num, lst)
     print(result)
+
+    r1 = result[:60]
+    print(r1, len(r1))
+
+    r2 = result[60:]
+    print(r2, len(r2))
 
     # --------- 测试 多线程任务锁 ---------
     # log_int_thread()
@@ -202,6 +166,7 @@ def test_main():
     # driver.get("https://www.huya.com/l")
     # _add_cookies(driver)
     # time.sleep(10)
+    pass
 
 
 if __name__ == '__main__':
