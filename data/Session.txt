@@ -1,0 +1,20 @@
+[
+  {
+    "id": 0,
+    "session_id": "gr2dgg24jjs22kee",
+    "user_id": 0,
+    "expired_time": 1536075871.7791843
+  },
+  {
+    "id": 1,
+    "session_id": "22llddlge24l2dlg",
+    "user_id": 4,
+    "expired_time": 1536076455.4548767
+  },
+  {
+    "id": 2,
+    "session_id": "bgjkg2d2egj5gl42",
+    "user_id": 4,
+    "expired_time": 1536082249.508754
+  }
+]

@@ -1,5 +1,3 @@
-username = "13559775273"
-password = "zqf20101208"
 # 推送内容
-content = "哈哈"
+content = "吱吱 冒个泡"
 cookies = "SoundValue=0.50; __yamid_tt1=0.6458637742000024; __yamid_new=C8992A46FAC000019C7B16D4192F68E0; alphaValue=0.80; guid=0e74b06dae607b5d1936fde8fee872a7; udb_guiddata=199955810db54b2d908be00902d5411a; Hm_lvt_51700b6c722f5bb4cf39906a596ea41f=1568559447,1568606763,1568625991,1568800749; udb_passdata=3; __yasmid=0.6458637742000024; sdid=; isInLiveRoom=; PHPSESSID=q5er0h4i0r2gjermejtk76s9v0; web_qrlogin_confirm_id=246dd1b5-83f5-4001-b162-e513858d25d2; udb_uid=2284177747; yyuid=2284177747; udb_passport=qq_hyajbx8923j7; username=qq_hyajbx8923j7; udb_version=1.0; udb_origin=0; udb_status=1; udb_accdata=undefined; h_unt=1568882442; Hm_lpvt_51700b6c722f5bb4cf39906a596ea41f=1568882443; udb_biztoken=AQB3P4EtoryNyHn6DxnAaDNKAnchubyqEDu6d_wb7yZ-k11x2U--Hvpn6ZXU8g8xdFiWHxhPlN_jQtGQ8-7opb0Amaz5egJGnshkHDRus6MYKqHvEwpcS7GooOigVlwVnaSr2hpMsWkKCdXqi4H7XQkbB5u07XfpWbB45c43B7vwVN1a61PjFW1yU1DqBOv5r-g_CNty1FQvurTUjoDc_f_EmfIrvBsEGjRXjjZxo7ldFehAV6PETg5u30zJ7WhJDA1j2633gbJVoWOSyU6Cd9wn4LO1-_wpJVn5JNlbLqUqlggKbiz0BFfmZAgXxS7sYiBWdvzmce_YFORLHRKZ-kjG; __yaoldyyuid=2284177747; _yasids=__rootsid%3DC89B16130D500001D1D96800FFF01E16"
