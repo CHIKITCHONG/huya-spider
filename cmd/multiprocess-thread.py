@@ -1,20 +1,19 @@
 import queue
+import logging
 import multiprocessing as mp
+from multiprocessing.managers import BaseManager
 import threading as td
 import time
-import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
-from cache.huya_cache import redis_cli_gen
 from conf import config
 from conf.config import server_addr, port
 from tool.comm_lib import _add_cookies, time_spend
 from tool.enum_instance import Order
-from multiprocessing.managers import BaseManager
 
 q = queue.Queue()
 
@@ -34,6 +33,8 @@ def working():
 
 # 从task队列取任务,并把结果写入result队列:
 def get_url_from_task():
+    if len(config.cookies) == 0:
+        raise EnvironmentError("无效的 cookies")
     task = working()
     while True:
         try:

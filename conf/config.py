@@ -1,5 +1,7 @@
 # 推送内容
 content = "吱吱 冒个泡"
-cookies = "SoundValue=0.50; __yamid_tt1=0.6458637742000024; __yamid_new=C8992A46FAC000019C7B16D4192F68E0; alphaValue=0.80; guid=0e74b06dae607b5d1936fde8fee872a7; udb_guiddata=199955810db54b2d908be00902d5411a; sdid=; isInLiveRoom=; Hm_lvt_51700b6c722f5bb4cf39906a596ea41f=1568887232,1568890725,1568966099,1569051456; __yasmid=0.6458637742000024; udb_passdata=3; PHPSESSID=od87rc41uc0stevvn1jvstig90; web_qrlogin_confirm_id=8d553a9e-5ef5-4de9-8ddd-63d6cdd77f4f; udb_uid=2284177747; yyuid=2284177747; udb_passport=qq_hyajbx8923j7; username=qq_hyajbx8923j7; udb_version=1.0; udb_origin=0; udb_status=1; udb_accdata=undefined; Hm_lpvt_51700b6c722f5bb4cf39906a596ea41f=1569051489; h_unt=1569051489; udb_biztoken=AQCVkFGGW92LetgHsALvfewF7gimI7ek5Cbfveva1e7Gvuvy7XBabsqM_-I0ApKu4tghZlU9dTAGNFITXePfJk0MLyzPdg3JBUQu0OWSOIS5tiKkmcDrjjRRocgEim1tjIrl1NQc1YMQmJzlPrboihJsP1TE86P3g4-50F8dJudpj2c__MiOHFAtMkizF6pbQUSrustlIci5iG_rdVvNWh0Vk2fWPPAaHJcrAA7GVZwBlgaRd85PE9Sy--_6ppaIFHZ3SsOjcu7D8-4NawHhWFiyg1e4sS6hIJhw6KrHdVko5Q69Cl-QTQP2Y1eP2d-sctHcxfReXFsmP0nZqYdy17X4; __yaoldyyuid=2284177747; _yasids=__rootsid%3DC89BB74A08A000016261AA2C1AD32410"
+# cookies
+cookies = ""
+# 队列所在服务器 ip地址、端口
 server_addr = '127.0.0.1'
 port = 5000
