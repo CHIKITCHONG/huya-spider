@@ -30,7 +30,8 @@ def page_up():
     """
     测试翻页
     """
-    driver = driver_option()
+    # driver = driver_option()
+    driver = driver_headless()
     driver.maximize_window()
 
     url = 'https://www.huya.com/l'
@@ -45,9 +46,10 @@ def page_up():
             tag = driver.find_element_by_css_selector(Order.page_down.value)
             if tag:
                 tag.click()
-                time.sleep(3)
+                time.sleep(20)
                 pg, sum = get_source(driver)
-                source_from_page(pg, sum, href_list)
+                a = source_from_page(pg, sum, href_list)
+                print(a)
         except ElementClickInterceptedException:
             return href_list
         except NoSuchElementException:
@@ -111,25 +113,33 @@ def chrome_option_cookies():
     return browser
 
 
+def driver_headless():
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    d = webdriver.Chrome(chrome_options=chrome_options)
+    return d
+
+
 def test_main():
     # --------- 测试获取 html 源码----------
-    driver = driver_option()
-    driver.get("https://www.huya.com/l")
-    driver.maximize_window()
-    driver.implicitly_wait(5)
-
-    _add_cookies(driver)
-    into_live(driver)
-    # 获取页面源码
-    resp, num = get_source(driver)
-    lst = []
-    result = source_from_page(resp, num, lst)
-
-    r1 = result[:60]
-    print(r1, len(r1))
-
-    r2 = result[60:]
-    print(r2, len(r2))
+    # driver = driver_option()
+    # driver.get("https://www.huya.com/l")
+    # driver.maximize_window()
+    # driver.implicitly_wait(5)
+    #
+    # _add_cookies(driver)
+    # into_live(driver)
+    # # 获取页面源码
+    # resp, num = get_source(driver)
+    # lst = []
+    # result = source_from_page(resp, num, lst)
+    #
+    # r1 = result[:60]
+    # print(r1, len(r1))
+    #
+    # r2 = result[60:]
+    # print(r2, len(r2))
 
     # --------- 测试 多线程任务锁 ---------
     # log_int_thread()
@@ -137,8 +147,8 @@ def test_main():
     # thread_func_global()
 
     # -------- 测试不停翻页 ---------
-    # resp = page_up()
-    # print(resp)
+    resp = page_up()
+    print(resp)
 
     # 测试启用 Chrome option 启动，phantomjs 需要做反爬虫
     # driver = chrome_option_cookies()

@@ -3,8 +3,6 @@ import multiprocessing as mp
 import threading as td
 import time
 import logging
-from typing import List
-
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
@@ -13,11 +11,44 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from cache.huya_cache import redis_cli_gen
 from conf import config
+from conf.config import server_addr, port
 from tool.comm_lib import _add_cookies, time_spend
 from tool.enum_instance import Order
-
+from multiprocessing.managers import BaseManager
 
 q = queue.Queue()
+
+
+class QueueManager(BaseManager):
+    pass
+
+
+def working():
+    QueueManager.register('get_task_queue')
+    QueueManager.register('get_result_queue')
+    m = QueueManager(address=(server_addr, port), authkey=b'wykj2019')
+    m.connect()
+    task = m.get_task_queue()
+    return task
+
+
+# 从task队列取任务,并把结果写入result队列:
+def get_url_from_task():
+    task = working()
+    while True:
+        try:
+            sum = []
+            result = task.get(timeout=1)
+            print('获取到 {} 的信息,开始进入工作函数'.format(len(result)))
+            page = len(result) // 2
+            sum.append(result[:page])
+            sum.append(result[page:])
+            multiprocess_main(sum)
+            time.sleep(5)
+
+        except queue.Empty:
+            print('队列为空,此次发送任务完成')
+            break
 
 
 class ThreadTaskViaChrome(object):
@@ -33,7 +64,6 @@ class ThreadTaskViaChrome(object):
         一个主处理函数处理进入房间发评论
         """
         driver = self.q_phantomjs.get()
-
         driver.get(url)
         _add_cookies(driver)
 
@@ -133,53 +163,7 @@ def thread_main(url_list):
     cur.close_chrome()
 
 
-def multiprocess_main():
-    # 开多进程
-    url_list = [
-        ['https://www.huya.com/uzi', 'https://www.huya.com/lafeng', 'https://www.huya.com/52700',
-         'https://www.huya.com/417964', 'https://www.huya.com/1380', 'https://www.huya.com/loldongyueyue',
-         'https://www.huya.com/12123', 'https://www.huya.com/408604', 'https://www.huya.com/haddis',
-         'https://www.huya.com/maxiaoshuai', 'https://www.huya.com/518518', 'https://www.huya.com/agbaozi',
-         'https://www.huya.com/107222', 'https://www.huya.com/11342412', 'https://www.huya.com/pp1204',
-         'https://www.huya.com/housangun', 'https://www.huya.com/chenzihao', 'https://www.huya.com/991222',
-         'https://www.huya.com/501781', 'https://www.huya.com/159409', 'https://www.huya.com/791166',
-         'https://www.huya.com/bg90010abl', 'https://www.huya.com/776075', 'https://www.huya.com/11352908',
-         'https://www.huya.com/378173', 'https://www.huya.com/shangjin', 'https://www.huya.com/616702',
-         'https://www.huya.com/966988', 'https://www.huya.com/11342421', 'https://www.huya.com/125393',
-         'https://www.huya.com/hujiangjun', 'https://www.huya.com/52503', 'https://www.huya.com/huyabuyi',
-         'https://www.huya.com/19584140', 'https://www.huya.com/92601', 'https://www.huya.com/100953',
-         'https://www.huya.com/gucun', 'https://www.huya.com/kpl', 'https://www.huya.com/11342414',
-         'https://www.huya.com/13754079', 'https://www.huya.com/912597', 'https://www.huya.com/gushouyu',
-         'https://www.huya.com/503376', 'https://www.huya.com/18682596', 'https://www.huya.com/447963',
-         'https://www.huya.com/guanzongo', 'https://www.huya.com/19096820', 'https://www.huya.com/589193',
-         'https://www.huya.com/11352915', 'https://www.huya.com/528017', 'https://www.huya.com/990919',
-         'https://www.huya.com/yiwaa', 'https://www.huya.com/143075', 'https://www.huya.com/520731',
-         'https://www.huya.com/17635616', 'https://www.huya.com/chushouguai', 'https://www.huya.com/huhuu',
-         'https://www.huya.com/huyaoxiaoyu', 'https://www.huya.com/11352944', 'https://www.huya.com/816945']
-        ,
-        ['https://www.huya.com/lpl', 'https://www.huya.com/huaih', 'https://www.huya.com/feiduan1520',
-         'https://www.huya.com/11352970', 'https://www.huya.com/18595696', 'https://www.huya.com/930671',
-         'https://www.huya.com/qingwa666', 'https://www.huya.com/704593', 'https://www.huya.com/11342396',
-         'https://www.huya.com/243680', 'https://www.huya.com/924898', 'https://www.huya.com/shangdi',
-         'https://www.huya.com/11336726', 'https://www.huya.com/13865165', 'https://www.huya.com/sisi521',
-         'https://www.huya.com/133880', 'https://www.huya.com/761792', 'https://www.huya.com/102491',
-         'https://www.huya.com/978012', 'https://www.huya.com/cocoyue', 'https://www.huya.com/592655',
-         'https://www.huya.com/5801xiaowei', 'https://www.huya.com/400298', 'https://www.huya.com/15107963',
-         'https://www.huya.com/991202', 'https://www.huya.com/hunterxw', 'https://www.huya.com/10036887',
-         'https://www.huya.com/19129736', 'https://www.huya.com/690482', 'https://www.huya.com/lck',
-         'https://www.huya.com/221555', 'https://www.huya.com/660069', 'https://www.huya.com/kyjpcq',
-         'https://www.huya.com/237501', 'https://www.huya.com/990424', 'https://www.huya.com/11342386',
-         'https://www.huya.com/15598093', 'https://www.huya.com/miqijieshuo', 'https://www.huya.com/19675029',
-         'https://www.huya.com/978013', 'https://www.huya.com/cxldb', 'https://www.huya.com/19377567',
-         'https://www.huya.com/19392420', 'https://www.huya.com/16368110', 'https://www.huya.com/17611123',
-         'https://www.huya.com/18012993', 'https://www.huya.com/213062', 'https://www.huya.com/19392815',
-         'https://www.huya.com/880201', 'https://www.huya.com/978011', 'https://www.huya.com/adgll',
-         'https://www.huya.com/981175', 'https://www.huya.com/915056', 'https://www.huya.com/272564',
-         'https://www.huya.com/czj520wyy', 'https://www.huya.com/520635', 'https://www.huya.com/godlie',
-         'https://www.huya.com/58dajin', 'https://www.huya.com/mianzai', 'https://www.huya.com/978016']
-        ,
-        ]
-
+def multiprocess_main(url_list):
     pool = mp.Pool(processes=2)
     for i in url_list:
         # 2个进程并行
@@ -189,32 +173,9 @@ def multiprocess_main():
     pool.join()
 
 
-# 订阅 redis 频道
-def subscribe_from_redis(s) -> List[str]:
-    resp = []
-    msg = s.listen()
-
-    # 监听状态：有消息发布了就拿过来
-    for item in msg:
-        if item['type'] == "message":
-            data = str(item["data"], encoding="utf-8")
-            resp.append(data)
-
-    return resp
-
-
 @time_spend
-def worker(r):
-
-    multiprocess_main()
-
-
 def main():
-    # 初始化 redis
-    r = redis_cli_gen()
-
-    # 调用 worker
-    worker(r)
+    get_url_from_task()
 
 
 if __name__ == "__main__":
